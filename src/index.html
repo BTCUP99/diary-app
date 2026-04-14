@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>日记本</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <!-- 侧边栏 -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h1>📔 日记本</h1>
+      </div>
+      <nav class="sidebar-nav">
+        <button class="nav-btn active" data-view="home">🏠 首页</button>
+        <button class="nav-btn" data-view="calendar">📅 日历</button>
+        <button class="nav-btn" data-view="list">📝 日记列表</button>
+        <button class="nav-btn" data-view="search">🔍 搜索</button>
+      </nav>
+      <div class="sidebar-stats">
+        <div class="stat-item">
+          <span class="stat-value" id="total-diary-count">0</span>
+          <span class="stat-label">总日记数</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-value" id="current-streak">0</span>
+          <span class="stat-label">连续天数</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- 主内容区 -->
+    <main class="main-content">
+      <!-- 首页视图 -->
+      <section id="home-view" class="view active">
+        <div class="view-header">
+          <h2>📊 年度热力图</h2>
+          <div class="year-nav">
+            <button id="prev-year">◀</button>
+            <span id="current-year">2024</span>
+            <button id="next-year">▶</button>
+          </div>
+        </div>
+
+        <!-- GitHub风格热力图 -->
+        <div class="heatmap-container">
+          <div class="heatmap-months" id="heatmap-months"></div>
+          <div class="heatmap-wrapper">
+            <div class="heatmap-days-label">
+              <span>周日</span>
+              <span>周二</span>
+              <span>周四</span>
+              <span>周六</span>
+            </div>
+            <div class="heatmap-grid" id="heatmap-grid"></div>
+          </div>
+        </div>
+
+        <div class="heatmap-legend">
+          <span>无记录</span>
+          <div class="legend-squares">
+            <span class="legend-square level-0"></span>
+            <span class="legend-square level-1"></span>
+            <span class="legend-square level-2"></span>
+            <span class="legend-square level-3"></span>
+            <span class="legend-square level-4"></span>
+          </div>
+          <span>详细</span>
+        </div>
+
+        <!-- 今日日记 -->
+        <div class="today-diary">
+          <h3 id="today-date"></h3>
+          <div id="today-content" class="diary-content">
+            <p class="no-diary">今天还没有写日记哦～</p>
+          </div>
+          <button class="btn-primary" id="write-today-btn">✏️ 写日记</button>
+        </div>
+      </section>
+
+      <!-- 日历视图 -->
+      <section id="calendar-view" class="view">
+        <div class="view-header">
+          <h2>📅 日历视图</h2>
+        </div>
+        <div class="calendar-container">
+          <div class="calendar-header">
+            <button id="cal-prev-month">◀</button>
+            <span id="cal-current-month">2024年4月</span>
+            <button id="cal-next-month">▶</button>
+          </div>
+          <div class="calendar-weekdays">
+            <span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span>
+          </div>
+          <div class="calendar-days" id="calendar-days"></div>
+        </div>
+      </section>
+
+      <!-- 日记列表视图 -->
+      <section id="list-view" class="view">
+        <div class="view-header">
+          <h2>📝 日记列表</h2>
+          <select id="list-sort">
+            <option value="newest">最新在前</option>
+            <option value="oldest">最早在前</option>
+          </select>
+        </div>
+        <div class="diary-list" id="diary-list">
+          <p class="empty-message">暂无日记，写下你的第一篇日记吧！</p>
+        </div>
+      </section>
+
+      <!-- 搜索视图 -->
+      <section id="search-view" class="view">
+        <div class="view-header">
+          <h2>🔍 搜索日记</h2>
+        </div>
+        <div class="search-box">
+          <input type="text" id="search-input" placeholder="输入关键词搜索...">
+          <button id="search-btn">搜索</button>
+        </div>
+        <div class="search-results" id="search-results">
+          <p class="empty-message">输入关键词开始搜索</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- 日记编辑模态框 -->
+  <div id="diary-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modal-title">写日记</h3>
+        <button class="modal-close" id="modal-close">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="diary-date">日期</label>
+          <input type="date" id="diary-date">
+        </div>
+        <div class="form-group">
+          <label for="diary-title">标题（可选）</label>
+          <input type="text" id="diary-title" placeholder="给日记起个标题...">
+        </div>
+        <div class="form-group">
+          <label for="diary-text">内容</label>
+          <textarea id="diary-text" placeholder="今天发生了什么..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>心情</label>
+          <div class="mood-selector">
+            <button class="mood-btn" data-mood="happy">😊 开心</button>
+            <button class="mood-btn" data-mood="normal">😐 一般</button>
+            <button class="mood-btn" data-mood="sad">😢 难过</button>
+            <button class="mood-btn" data-mood="angry">😠 生气</button>
+            <button class="mood-btn" data-mood="excited">🤩 兴奋</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="delete-diary-btn" style="display:none;">🗑️ 删除</button>
+        <button class="btn-primary" id="save-diary-btn">💾 保存</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="main.js"></script>
+</body>
+</html>
